@@ -1,0 +1,58 @@
+---
+title: Fine-Tuning Open-Source LLMs with Domain-Specific Data
+date: '2024-03-07'
+tags: ['LLMs', 'AI', 'Fine-Tuning', 'Open Source']
+draft: false
+summary: This article is about fine-tuning open-source language models with domain-specific data. 
+---
+
+# Fine-Tuning
+
+## Short notes:
+Based on this article. And these slides.
+Two main methods of instruction tuning of LLMs:
+Pretraining → Supervised Fine-Tuning (SFT) → Alignment (RLHF, DPO, etc.)
+Although the name is similar, this type of supervised fine-tuning has some 
+differences from when we fine-tune a language model to do a task, such as classification. 
+In the case of classification for example, a last layer neural network gets added to 
+the transformer architecture (normally dense) that has input of the last layer and 
+the output with the number of classes that we have. Then we either finetune the 
+whole language model and the output layer or just freeze the weights of the language model 
+and just train the weights of the dense output layer only. 
+The SFT in this article is related to instruction tuning an LLM with domain-specific data. 
+In this scenario, we do not change the architecture of the model and do not change any layers. 
+We simply give model questions that a person could ask a model and the possible responses given 
+the domain knowledge that we have. We could even go one step further and include step-by-step 
+information as explained in this paper. We will see examples later so it will be more clear.
+Main Factors to have a performant model when you do SFT:
+Quality of the instruction dataset. If the language model has good materials to be trained on, 
+the results are going to be better, which is what we expect.
+Added to normal language tokens, each language model has some specific tokens that 
+during pre-training learns to use by examples. These special tokens do not have special meanings 
+by themselves and their choice depends on the preference of the people who pre-train the LLM. 
+For example, Llama 2 has this opening special token ```<<SYS>>``` for the system prompt and this 
+closing special token ```<</SYS>>```. For best results, if we are fine-tuning a pre-trained LLM, 
+we should follow the same special tokens as the pre-trained LLM and the same template to 
+use them to make instruction examples. 
+
+## A few notes about training:
+
+Fine-tuning a large language model as we do training, requires training all the weights of 
+the model, which are nowadays in order of billions for smaller LLMs to hundreds of billions 
+for larger LLMs. The large amount of weights is a problem both in terms of the hardware 
+required to train these LLMs and also the time needed for training. To resolve this issue, 
+several papers have investigated methods to do what is called Parameter-Efficient Fine-Tuning (PEFT).
+ The idea is to find ways to train smaller number of weights and still reach good fine-tuning results. 
+ A famous PEFT method is Low-Rank Adaptation (LoRA), which is based on the findings of this paper. 
+ Aghajanian, et al. empirically shows that there exists a low dimension re-parameterization as effective as 
+ the full parameter space. This means that optimizing a smaller number parameters can have an effect almost 
+ as good as of optimizing the whole parameters. If you like video explanations, Letita goes over LoRA in this 
+ almost 8-minute video. In order to know about the meaning of rank in matrices, you can refer to this linear algebra 
+ review in CS229.
+
+ Building on the insight of Aghajanyan et al. (2020), LoRA authors propose that the weight 
+update matrix similarly exhibit an "intrinsic low rank". Specifically, for an initial weight 
+matrix $$W_0$$ belonging to $$\mathbb{R}^{d\times k}$$, the update by expressing the change through a low-rank decomposition $$W_0+\Delta W = W_0 + BA$$, where $$B$$ is a matrix in $$\mathbb{R}^{d\times r}$$, $$A$$ is in $$\mathbb{R}^{r\times k}$$, and the rank $$r$$ is significantly smaller than the minimum of $$d$$ and $$k$$.
+
+## RLHF vs DPO
+This short YouTube video by Letita goes a bit deeper into RLHF and DPO.
