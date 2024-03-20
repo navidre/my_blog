@@ -48,6 +48,10 @@ module.exports = {
             code: {
               color: theme('colors.indigo.500'),
             },
+            p: {
+              fontSize: '1.2rem', // Use your desired font size
+              // Any other styles you want to apply to <p>
+            },
           },
         },
         invert: {
